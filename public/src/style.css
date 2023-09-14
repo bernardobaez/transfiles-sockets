@@ -20,3 +20,13 @@ body {
     width: 100%;
     background-color: rgb(226, 226, 226);
 }
+
+.file{
+    height: 50dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    opacity: 0.5;
+    border-style: dashed;
+}

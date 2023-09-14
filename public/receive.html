@@ -10,29 +10,45 @@
 <body>
 
     <div class="container mt-5">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item active" aria-current="page">Home</li>
-            </ol>
-        </nav>
-    </div>
+        <div class="row">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item" aria-current="page"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Receive Files</li>
+                </ol>
+            </nav>
+        </div>
 
-    <div style="display: flex; align-items: center; gap: 10px;">
-        <h2>CODIGO: </h2>
-        <p class="socket-id" style="font-size: 1em;"></p>
-    </div>
+            <div class="row">
+                <div class="col">
+                    <div class="list-group" id="device-list">
+                        <a class="list-group-item list-group-item-action">
+                            <h3 class="mb-0">iPhone Bernardo</h3>
+                            <p class="mb-0">IP ADDRESS: 189.56.23.1</p>
+                        </a>
+                        <!-- Agrega más dispositivos aquí según sea necesario -->
+                    </div>
+                </div>
+            </div>
 
-    <div class="send-file">
-        <input type="file" name="" id="" class="file" >
-        <button type="submit" class="send">ENVIAR</button>
+                <div class="file col mt-4" id="files">
+                    <h5>En espera de archivos...</h5>
+                </div>
     </div>
-
-    <div id="receivedFiles"></div>
 
 </body>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
+    let response = "";
+
+    // while (response.trim() === "") {
+    // response = prompt("Ingresa un nombre:");
+
+    // if (response.trim() === "") {
+    //     alert("Debes ingresar un nombre.");
+    // }
+    // }
     let socket = io();
 
     async function getIp(){
@@ -49,7 +65,7 @@
     socket.on("received-file", (data) => {
         console.log(data.filename);
         console.log(data);
-        const receivedFilesDiv = document.getElementById('receivedFiles');
+        const receivedFilesDiv = document.getElementById('files');
         const fileLink = document.createElement('a');
         // Utilizar el atributo href para el enlace directo al archivo
         fileLink.href = `/downloads/${data.filename}`; // Asegúrate de configurar correctamente la ruta
