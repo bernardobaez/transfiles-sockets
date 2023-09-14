@@ -18,8 +18,8 @@ io.on("connection", (socket)=>{
 
     socket.emit("get-id", socket.id);
 
-    socket.on("upload-file", data=>{
-        const filePath = __dirname +  '/uploads/' + data.filename;
+    socket.on("upload-file", (data)=>{
+        const filePath = __dirname +  `/uploads/` + data.filename;
         fs.writeFileSync(filePath, data.content, 'binary');
 
         io.emit("received-file", data);

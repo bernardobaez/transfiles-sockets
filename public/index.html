@@ -12,7 +12,7 @@
     </div>
 
     <div class="send-file">
-        <input type="file" name="" id="" class="file">
+        <input type="file" name="" id="" class="file" >
         <button type="submit" class="send">ENVIAR</button>
     </div>
 
@@ -45,7 +45,7 @@
         reader.onload = e=>{
             const content = e.target.result;
             const filename = file.name;
-            socket.emit("upload-file", {filename, content}, user_id);
+            socket.emit("upload-file", {filename, content});
         }
 
         reader.readAsBinaryString(file);
@@ -57,7 +57,7 @@
         const receivedFilesDiv = document.getElementById('receivedFiles');
         const fileLink = document.createElement('a');
         // Utilizar el atributo href para el enlace directo al archivo
-        fileLink.href = `/downloads/${data.filename.replace(" ", "_")}`; // Asegúrate de configurar correctamente la ruta
+        fileLink.href = `/downloads/${data.filename}`; // Asegúrate de configurar correctamente la ruta
         console.log(`/downloads/${data.filename.replace(" ", "_")}`);
         fileLink.download = data.filename;
         fileLink.textContent = `Descargar archivo: ${data.filename.replace(" ", "_")}`;
