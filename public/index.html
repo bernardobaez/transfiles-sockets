@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <h2>CODIGO: </h2>
+        <p class="socket-id" style="font-size: 1em;"></p>
+    </div>
+
+    <div class="send-file">
+        <input type="file" name="" id="" class="file">
+        <button type="submit" class="send">ENVIAR</button>
+    </div>
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    let socket = io();
+
+    socket.on("connect", ()=>{
+        socket.on('get-id', id=>{
+            document.querySelector(".socket-id").textContent = id;
+            socket.emit("user-connected", id);
+        });
+    });
+    
+</script>
+
+</html>
