@@ -3,7 +3,15 @@ const path = require("path");
 const fs = require("fs");
 
 router.get("/", (req, res) => {
-  // Tu lógica para la ruta raíz aquí
+
+});
+
+router.get("/receive", (req, res)=>{
+    res.sendFile(path.join(__dirname, "../public/", "receive.html"));
+});
+
+router.get("/sendfiles", (req, res)=>{
+  res.sendFile(path.join(__dirname, "../public/", "send.html"));
 });
 
 router.get("/downloads/:file", (req, res) => {

@@ -3,67 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Home</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="src/style.css">
 </head>
 <body>
-    <div style="display: flex; align-items: center; gap: 10px;">
-        <h2>CODIGO: </h2>
-        <p class="socket-id" style="font-size: 1em;"></p>
+    <div class="container mt-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active" aria-current="page">Home</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col">
+                <h2>Available Devices:</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="list-group" id="device-list">
+                    <a class="list-group-item list-group-item-action">
+                        <h3 class="mb-0">iPhone Bernardo</h3>
+                        <p class="mb-0">IP ADDRESS: 189.56.23.1</p>
+                    </a>
+                    <!-- Agrega más dispositivos aquí según sea necesario -->
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" type="button" id="send-btn" onclick="window.href.location = '/receive'">RECEIVE FILES</button>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="send-file">
-        <input type="file" name="" id="" class="file" >
-        <button type="submit" class="send">ENVIAR</button>
-    </div>
-
-    <div id="receivedFiles"></div>
-
 </body>
 
+<script src="bootstrap/js/bootstrap.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    let socket = io();
-    let user_id = "";
-    socket.on("connect", ()=>{
-        socket.on('get-id', id=>{
-            document.querySelector(".socket-id").textContent = id;
-            socket.emit("user-connected", id);
-            user_id = id;
-        });
-    });
+    const socket = io();
+    let device = document.querySelector(".devices")
+    let devices = document.querySelectorAll("./devices > *");
 
-    document.querySelector(".send").addEventListener("click", ()=>{
-        let files = document.querySelector(".file");
-        let file = files.files[0];
+    socket.on("connect-devices", (devices)=>{
+        
+    })
 
-        if(!file){
-            alert("Debe seleccionar un archivo.");
-            return;
+    socket.on("disconnect-devices", (devices)=>{
+        let ele = devices.filter()
+
+        if(document.querySelectorAll(".devices > *").length == 0){
+            device.innerHTML += "<h3 id='message'>There's no devices to send files.<h3>";
         }
-
-        const reader = new FileReader();
-        reader.onload = e=>{
-            const content = e.target.result;
-            const filename = file.name;
-            socket.emit("upload-file", {filename, content});
-        }
-
-        reader.readAsBinaryString(file);
     });
+    //socket.on()
 
-    socket.on("received-file", (data) => {
-        console.log(data.filename);
-        console.log(data);
-        const receivedFilesDiv = document.getElementById('receivedFiles');
-        const fileLink = document.createElement('a');
-        // Utilizar el atributo href para el enlace directo al archivo
-        fileLink.href = `/downloads/${data.filename}`; // Asegúrate de configurar correctamente la ruta
-        console.log(`/downloads/${data.filename.replace(" ", "_")}`);
-        fileLink.download = data.filename;
-        fileLink.textContent = `Descargar archivo: ${data.filename.replace(" ", "_")}`;
-        receivedFilesDiv.appendChild(fileLink);
-    });
-    
+    if(document.querySelectorAll(".devices > *").length == 0){
+        device.innerHTML += "<h3 id='message'>There's no devices to send files.<h3>";
+    };
+
 </script>
 
 </html>

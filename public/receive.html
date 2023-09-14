@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receive Files</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+
+    <div class="container mt-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active" aria-current="page">Home</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <h2>CODIGO: </h2>
+        <p class="socket-id" style="font-size: 1em;"></p>
+    </div>
+
+    <div class="send-file">
+        <input type="file" name="" id="" class="file" >
+        <button type="submit" class="send">ENVIAR</button>
+    </div>
+
+    <div id="receivedFiles"></div>
+
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    let socket = io();
+
+    async function getIp(){
+        const URL_API = "https://api.ipify.org/?format=json";
+        const respuestaRaw = await fetch(URL_API);
+        const respuesta = await respuestaRaw.json();
+        return respuesta.ip;
+    }
+    
+    socket.on("get-id", (id)=>{
+        
+    });
+
+    socket.on("received-file", (data) => {
+        console.log(data.filename);
+        console.log(data);
+        const receivedFilesDiv = document.getElementById('receivedFiles');
+        const fileLink = document.createElement('a');
+        // Utilizar el atributo href para el enlace directo al archivo
+        fileLink.href = `/downloads/${data.filename}`; // Asegúrate de configurar correctamente la ruta
+        console.log(`/downloads/${data.filename.replace(" ", "_")}`);
+        fileLink.download = data.filename;
+        fileLink.textContent = `Descargar archivo: ${data.filename.replace(" ", "_")}`;
+        receivedFilesDiv.appendChild(fileLink);
+    });
+
+    
+</script>
+
+</html>

@@ -1,0 +1,22 @@
+body {
+    background-color: #E6F7FF;
+}
+
+
+.devices{
+    height: 70dvh;
+    max-height: 70dvh;
+    overflow-y: auto;
+}
+
+.devices > #message{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 90%;
+}
+
+.device{
+    width: 100%;
+    background-color: rgb(226, 226, 226);
+}
