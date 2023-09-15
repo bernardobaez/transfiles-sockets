@@ -1,16 +1,18 @@
 const router = require("express").Router();
 const path = require("path");
 const fs = require("fs");
+const generate = require("../utilities/functions");
 
 router.get("/", (req, res) => {
     res.render("index");
 });
 
 router.get("/receive", (req, res)=>{
-    res.render("receive");
+    let key =  generate(20);
+    res.render("receive", {key});
 });
 
-router.get("/send", (req, res)=>{
+router.post("/send", (req, res)=>{
     res.render("send");
 });
 

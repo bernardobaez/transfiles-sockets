@@ -53,9 +53,14 @@ io.on("connection", (socket)=>{
         console.log(user_ids);
     });
 
+    socket.on("search-device", id=>{
+        let device = user_ids.filter(item => item.id == id);
+        socket.emit("get-search", device);
+    });
+
     socket.on("disconnect", ()=>{
         let nuevoArray = user_ids.filter(item => item.id !== socket.id);
-        io.emit("disconnect-devices", socket.id);
+        io.emit("device-disconnected", socket.id);
         user_ids = nuevoArray;
     });
 });

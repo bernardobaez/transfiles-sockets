@@ -24,10 +24,6 @@
         <div class="row">
             <div class="col devices">
                 <div class="list-group" id="device-list">
-                    <!-- <a class="list-group-item list-group-item-action" token="">
-                        <h3 class="mb-0">iPhone Bernardo</h3>
-                        <p class="mb-0">IP ADDRESS: 189.56.23.1</p>
-                    </a> -->
                     <!-- Agrega más dispositivos aquí según sea necesario -->
                 </div>
             </div>
@@ -48,51 +44,50 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
     const socket = io();
-const deviceList = document.querySelector("#device-list");
+    const deviceList = document.querySelector("#device-list");
+    const message = document.createElement("h3");
+    message.id = "message";
+    message.textContent = "There's no devices to send files.";
 
-socket.on("new-device", (name, id, ip) => {
-    // Crear un nuevo elemento de lista para el dispositivo
-    const deviceItem = document.createElement("a");
-    deviceItem.className = "list-group-item list-group-item-action";
-    deviceItem.setAttribute("data-device-id", id);
-    deviceItem.innerHTML = `
-        <h3 class="mb-0">${name}</h3>
-        <p class="mb-0">IP ADDRESS: ${ip}</p>
-    `;
+    socket.on("new-device", (name, id, ip) => {
+        // Crear un nuevo elemento de lista para el dispositivo
+        const deviceItem = document.createElement("a");
+        deviceItem.className = "list-group-item list-group-item-action";
+        deviceItem.setAttribute("data-device-id", id);
+        deviceItem.innerHTML = `
+            <h3 class="mb-0">${name}</h3>
+            <p class="mb-0">IP ADDRESS: ${ip}</p>
+        `;
 
-    // Eliminar el mensaje si existe
-    const message = document.querySelector("#message");
-        if (message) {
-            message.remove();
+        // Agregar el nuevo dispositivo a la lista
+        deviceList.appendChild(deviceItem);
+
+        // Ocultar el mensaje si existe
+        if (message.style.display !== "none") {
+            message.style.display = "none";
         }
-
-        deviceList.appendChild(deviceItem); // Agregar el nuevo dispositivo a la lista
     });
 
-    socket.on("disconnect-device", (disconnectedDeviceId) => {
-    // Buscar el dispositivo en la lista por su ID y eliminarlo
+    socket.on("device-disconnected", (disconnectedDeviceId) => {
+        // Buscar el dispositivo en la lista por su ID y eliminarlo
         const disconnectedDevice = document.querySelector(`[data-device-id="${disconnectedDeviceId}"]`);
         if (disconnectedDevice) {
             disconnectedDevice.remove();
         }
 
-        // Si no quedan dispositivos, agregar el mensaje
-        if (deviceList.children.length === 0) {
-            const message = document.createElement("h3");
-            message.id = "message";
-            message.textContent = "There's no devices to send files.";
+        // Si no quedan dispositivos, mostrar el mensaje
+        if (document.querySelectorAll(`[data-device-id]`).length == 0) {
+            message.style.display = "block";
             deviceList.appendChild(message);
         }
     });
 
     // Verificar si no hay dispositivos al cargar la página
     if (deviceList.children.length === 0) {
-        const message = document.createElement("h3");
-        message.id = "message";
-        message.textContent = "There's no devices to send files.";
-        document.querySelector(".devices").appendChild(message);
+        message.style.display = "block";
+        deviceList.appendChild(message);
     }
-
 </script>
+
 
 </html>
