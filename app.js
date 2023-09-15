@@ -41,10 +41,13 @@ io.on("connection", (socket)=>{
         io.emit("received-file", data);
     });
 
-    socket.on("new-connection", name =>{
+    socket.on("new-connection", (name, ip) =>{
+        io.emit("new-device", name, socket.id, ip);
+
         user_ids.push({
             name,
-            id: socket.id
+            id: socket.id,
+            ip
         });
 
         console.log(user_ids);
@@ -52,6 +55,7 @@ io.on("connection", (socket)=>{
 
     socket.on("disconnect", ()=>{
         let nuevoArray = user_ids.filter(item => item.id !== socket.id);
+        io.emit("disconnect-devices", socket.id);
         user_ids = nuevoArray;
     });
 });

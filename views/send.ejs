@@ -68,9 +68,14 @@
             });
         });
 
-        function success_send() {
-            document.querySelector("body").innerHTML += `
-                <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        function success_send(filename) {
+            const toastElement = document.createElement('div');
+            toastElement.className = "toast";
+            toastElement.role = "alert";
+            toastElement.setAttribute('aria-live', 'assertive');
+            toastElement.setAttribute('aria-atomic', 'true');
+
+            toastElement.innerHTML = `
                 <div class="toast-header">
                     <img src="..." class="rounded me-2" alt="...">
                     <strong class="me-auto">Success</strong>
@@ -78,21 +83,21 @@
                     <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
                 <div class="toast-body">
-                    File sent successfully!
-                </div>
+                    File "${filename}" sent successfully!
                 </div>
             `;
-            const toastElement = document.querySelector(".toast");
+
+            document.body.appendChild(toastElement);
             const toast = new bootstrap.Toast(toastElement);
             toast.show();
-        }  
+        }   
 
         let file = null; // Variable para almacenar el archivo seleccionado
 
         let fileinput = document.querySelector("#fileInput");
 
         fileinput.addEventListener("change", (e)=>{
-            file = fileinput.files[0];
+            file = event.target.files[0];
             document.querySelector(".dropzone h5").innerHTML = file.name;
 
             console.log(file);
@@ -109,10 +114,10 @@
                 const content = e.target.result;
                 const filename = file.name;
                 socket.emit("upload-file", { filename, content });
+                success_send(filename); // Mostrar mensaje de éxito con el nombre del archivo enviado
             };
 
-            reader.readAsBinaryString(file);
-            success_send();
+            reader.readAsBinaryString(file);    
         }
 
         const dropzone = document.querySelector(".dropzone");

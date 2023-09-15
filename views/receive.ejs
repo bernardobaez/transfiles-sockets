@@ -96,7 +96,7 @@
 
     getIp().then(res=>{
         ip.innerHTML = `IP ADDRESS: ${res}`;
-        socket.emit("new-connection", response, res);
+        socket.emit("new-connection", get_device() + ` (${response})`, res);
     }).catch(err=>{
         ip.innerHTML = `IP ADDRESS: 0.0.0.1`;
         socket.emit("new-connection", response, "0.0.0.1");
@@ -112,7 +112,11 @@
         console.log(`/downloads/${data.filename.replace(" ", "_")}`);
         fileLink.download = data.filename;
         fileLink.textContent = `Descargar archivo: ${data.filename.replace(" ", "_")}`;
-        receivedFilesDiv.appendChild(fileLink);
+        receivedFilesDiv.innerHTML = `
+        <a href="/downloads/${data.filename}" download>
+            <button class="btn btn-primary mb-4 mt-4">Descargar Archivo ${data.filename}</button>
+        </a>
+        `;
     });
 
     
