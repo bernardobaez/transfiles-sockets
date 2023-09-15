@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Receive Files</title>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="src/style.css">
+    <link rel="stylesheet" href="public/style.css">
 </head>
 <body>
 
@@ -23,32 +23,46 @@
                 <div class="col">
                     <div class="list-group" id="device-list">
                         <a class="list-group-item list-group-item-action">
-                            <h3 class="mb-0">iPhone Bernardo</h3>
-                            <p class="mb-0">IP ADDRESS: 189.56.23.1</p>
+                            <h3 class="mb-0 name">iPhone Bernardo</h3>
+                            <p class="mb-0 ip">IP ADDRESS: 189.56.23.1</p>
                         </a>
                         <!-- Agrega más dispositivos aquí según sea necesario -->
                     </div>
                 </div>
             </div>
 
-                <div class="file col mt-4" id="files">
-                    <h5>En espera de archivos...</h5>
+            <div class="file col mt-4" id="files">
+                <h5>En espera de archivos...</h5>
+            </div>
+
+            <div class="row">
+                <div class="col mt-4">
+                    <div class="list-group" id="device-list">
+                        <a class="list-group-item list-group-item-action list-group-item-primary">
+                            <h3 class="mb-0">Mo3hahwai7taeFi</h3>
+                            <p class="mb-0">CLAVE ACCESO</p>
+                        </a>
+                        <!-- Agrega más dispositivos aquí según sea necesario -->
+                    </div>
                 </div>
+            </div>
     </div>
 
 </body>
 
+<script src="bootstrap/js/bootstrap.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
     let response = "";
 
-    // while (response.trim() === "") {
-    // response = prompt("Ingresa un nombre:");
+    while (response.trim() === "") {
+    response = prompt("Ingresa un nombre:");
 
-    // if (response.trim() === "") {
-    //     alert("Debes ingresar un nombre.");
-    // }
-    // }
+    if (response.trim() === "") {
+        alert("Debes ingresar un nombre.");
+    }
+    }
+
     let socket = io();
 
     async function getIp(){
@@ -57,11 +71,37 @@
         const respuesta = await respuestaRaw.json();
         return respuesta.ip;
     }
-    
-    socket.on("get-id", (id)=>{
-        
-    });
 
+    function get_device(){
+        let device = "";
+        let n = navigator.userAgent;
+        
+        if(n.includes("iPhone")){
+            device = "iPhone";
+        }
+        if(n.includes("Android")){
+            device = "Android";
+        } 
+
+        if(n.includes("Linux")){
+            device = "Linux";
+        }
+
+        return device;
+    }
+    
+    let ip = document.querySelector(".ip");
+    let name = document.querySelector(".name");
+    name.innerHTML = get_device() + ` (${response})`;
+
+    getIp().then(res=>{
+        ip.innerHTML = `IP ADDRESS: ${res}`;
+        socket.emit("new-connection", response, res);
+    }).catch(err=>{
+        ip.innerHTML = `IP ADDRESS: 0.0.0.1`;
+        socket.emit("new-connection", response, "0.0.0.1");
+    })
+    
     socket.on("received-file", (data) => {
         console.log(data.filename);
         console.log(data);

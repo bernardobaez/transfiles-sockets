@@ -30,3 +30,24 @@ body {
     opacity: 0.5;
     border-style: dashed;
 }
+
+.dropzone{
+    height: 50dvh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    background-color: white;
+    opacity: 0.5;
+    transition: background-color 500ms, color 500ms, border 500ms;
+}
+
+.dropzone:hover{
+    color: rgb(183, 183, 183);
+    background-color: rgb(55, 55, 255);
+    border-color: 10px solid rgb(49, 141, 240);
+}
+
+.dropzone:hover>*{
+    color: white;
+}

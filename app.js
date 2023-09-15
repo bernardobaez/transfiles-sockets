@@ -7,12 +7,24 @@ const app = express();
 const server = require("http").createServer(app);
 const routes = require("./routes/routes.js");
 const io = require("socket.io")(server);
+const session = require("express-session");
 
 app.use(express.json());
-app.use(express.static(__dirname + "/public"));
+app.use("/public", express.static(__dirname + "/public"));
 app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules/bootstrap/dist')));
-app.use('/src', express.static(path.join(__dirname, '/public/src')));
 app.use("", routes);
+
+app.use(session({
+    secret: "secretomiop",
+    resave: false,
+    saveUninitialized: true,
+    cookie:{
+        secure: true
+    }
+}));
+
+app.set("view engine", "ejs");
+app.set("views", __dirname + "/views");
 
 let user_ids = [];
 
@@ -22,14 +34,24 @@ io.on("connection", (socket)=>{
     socket.emit("get-id", socket.id);
 
     socket.on("upload-file", (data)=>{
+        console.log(data)
         const filePath = __dirname +  `/uploads/` + data.filename;
         fs.writeFileSync(filePath, data.content, 'binary');
 
         io.emit("received-file", data);
     });
 
+    socket.on("new-connection", name =>{
+        user_ids.push({
+            name,
+            id: socket.id
+        });
+
+        console.log(user_ids);
+    });
+
     socket.on("disconnect", ()=>{
-        let nuevoArray = user_ids.filter(item => item !== socket.id);
+        let nuevoArray = user_ids.filter(item => item.id !== socket.id);
         user_ids = nuevoArray;
     });
 });

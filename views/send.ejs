@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Files</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="public/style.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item" aria-current="page"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Send Files</li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="list-group" id="device-list">
+                    <a class="list-group-item list-group-item-action list-group-item-success">
+                        <h3 class="mb-0 name">CONECTADO A: (iPhone Bernardo)</h3>
+                        <p class="mb-0 ip">IP ADDRESS: 189.56.23.1</p>
+                    </a>
+                    <!-- Agrega más dispositivos aquí según sea necesario -->
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="dropzone mt-4">
+                    <h5>Arrastra los archivos aquí.</h5>
+                    <input type="file" id="fileInput" style="display: none;">
+                    <label for="fileInput" class="btn btn-primary">SELECT FILE</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col">
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" type="button" id="send-btn">SEND FILE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on("connect", () => {
+            // Realizar acciones cuando se conecta al servidor de sockets
+        });
+
+        let user_id = "";
+        socket.on("connect", () => {
+            socket.on('get-id', id => {
+                // Actualizar elementos DOM con la información del usuario
+                //document.querySelector(".socket-id").textContent = id;
+                socket.emit("user-connected", id);
+                user_id = id;
+            });
+        });
+
+        function success_send() {
+            document.querySelector("body").innerHTML += `
+                <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <img src="..." class="rounded me-2" alt="...">
+                    <strong class="me-auto">Success</strong>
+                    <small>Just now</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    File sent successfully!
+                </div>
+                </div>
+            `;
+            const toastElement = document.querySelector(".toast");
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }  
+
+        let file = null; // Variable para almacenar el archivo seleccionado
+
+        let fileinput = document.querySelector("#fileInput");
+
+        fileinput.addEventListener("change", (e)=>{
+            file = fileinput.files[0];
+            document.querySelector(".dropzone h5").innerHTML = file.name;
+
+            console.log(file);
+        });
+
+        function sendfile() {
+            if (!file) {
+                alert("Debe seleccionar un archivo.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = e => {
+                const content = e.target.result;
+                const filename = file.name;
+                socket.emit("upload-file", { filename, content });
+            };
+
+            reader.readAsBinaryString(file);
+            success_send();
+        }
+
+        const dropzone = document.querySelector(".dropzone");
+
+        dropzone.addEventListener("dragover", (event) => {
+            event.preventDefault();
+            console.log("Por encima");
+        });
+
+        dropzone.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropzone.style.border = '2px dashed #ccc';
+
+            const files = event.dataTransfer.files;
+
+            if (files.length > 0) {
+                file = files[0];
+                document.querySelector(".dropzone h5").innerHTML = file.name;
+                console.log('Archivo soltado:', file.name);
+            }
+        });
+
+        const sendBtn = document.querySelector("#send-btn");
+
+        sendBtn.addEventListener("click", () => {
+            sendfile();
+        });
+    </script>
+</body>
+</html>

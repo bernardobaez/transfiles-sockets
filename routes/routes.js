@@ -3,15 +3,15 @@ const path = require("path");
 const fs = require("fs");
 
 router.get("/", (req, res) => {
-
+    res.render("index");
 });
 
 router.get("/receive", (req, res)=>{
-    res.sendFile(path.join(__dirname, "../public/", "receive.html"));
+    res.render("receive");
 });
 
-router.get("/sendfiles", (req, res)=>{
-  res.sendFile(path.join(__dirname, "../public/", "send.html"));
+router.get("/send", (req, res)=>{
+    res.render("send");
 });
 
 router.get("/downloads/:file", (req, res) => {
